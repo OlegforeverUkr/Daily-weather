@@ -7,7 +7,7 @@ import pandas as pd
 from dotenv import load_dotenv, find_dotenv
 from retry_requests import retry
 
-load_dotenv(find_dotenv(raise_error_if_not_found=True))
+load_dotenv(find_dotenv())
 
 TELEGRAM_BOT_TOKEN = os.getenv("TOKEN")
 TELEGRAM_CHANNEL_ID = os.getenv('TELEGRAM_CHANNEL_ID')

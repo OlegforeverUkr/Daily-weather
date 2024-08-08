@@ -56,10 +56,10 @@ def get_weather() -> str:
 
     # Create a DataFrame with the forecast data
     hourly_data = {
-        "Время": hourly_hours_only,
-        "Температура": normal_temp_2m,
-        "Ощущается как": normal_apparent_temperature,
-        "Осадки %": normal_precipitation_probability
+        "Time": hourly_hours_only,
+        "t°C": normal_temp_2m,
+        "Feel like": normal_apparent_temperature,
+        "Fallouts %": normal_precipitation_probability
     }
     hourly_dataframe = pd.DataFrame(data=hourly_data)
 

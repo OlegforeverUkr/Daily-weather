@@ -6,6 +6,7 @@ import requests_cache
 import pandas as pd
 from dotenv import load_dotenv
 from retry_requests import retry
+from tabulate import tabulate
 
 load_dotenv()
 
@@ -25,7 +26,7 @@ def get_weather() -> str:
     params = {
         "latitude": 49.453551,
         "longitude": 27.014202,
-        "hourly": ["temperature_2m", "apparent_temperature"],
+        "hourly": ["temperature_2m", "apparent_temperature", "precipitation_probability"],
         "timezone": None,
         "forecast_days": 1
     }
@@ -37,10 +38,12 @@ def get_weather() -> str:
     hourly = response.Hourly()
     hourly_temperature_2m = hourly.Variables(0).ValuesAsNumpy()
     hourly_apparent_temperature = hourly.Variables(1).ValuesAsNumpy()
+    hourly_precipitation_probability = hourly.Variables(2).ValuesAsNumpy()
 
     # Round the temperature values to 1 decimal place
     normal_temp_2m = [round(float(i), 1) for i in hourly_temperature_2m]
     normal_apparent_temperature = [round(float(i), 1) for i in hourly_apparent_temperature]
+    normal_precipitation_probability = [round(float(i), 1) for i in hourly_precipitation_probability]
 
     # Create a date range for the hourly forecast
     hourly_time = pd.date_range(
@@ -53,14 +56,15 @@ def get_weather() -> str:
 
     # Create a DataFrame with the forecast data
     hourly_data = {
-        "Часы": hourly_hours_only,
+        "Время": hourly_hours_only,
         "Температура": normal_temp_2m,
-        "Ощущается как": normal_apparent_temperature
+        "Ощущается как": normal_apparent_temperature,
+        "Осадки %": normal_precipitation_probability
     }
     hourly_dataframe = pd.DataFrame(data=hourly_data)
 
-    # Return a string representation of the DataFrame
-    return hourly_dataframe.to_markdown(index=None)
+    # Return a tabulate representation of the DataFrame
+    return tabulate(hourly_dataframe, headers="keys", tablefmt="plain", numalign="right", stralign="center", showindex=False)
 
 
 
@@ -71,7 +75,8 @@ def send_to_telegram(message: str) -> dict:
     # Set the parameters for the request
     params = {
         'chat_id': TELEGRAM_CHANNEL_ID,
-        'text': f'Доброе утро!\nПогода на сегодня\n\n{message}'
+        'text': f'Доброе утро!\nПогода на сегодня\n\n```{message}```',
+        'parse_mode': 'Markdown'
     }
 
     # Send the request to the Telegram Bot API

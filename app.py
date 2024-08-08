@@ -60,7 +60,7 @@ def get_weather() -> str:
     hourly_dataframe = pd.DataFrame(data=hourly_data)
 
     # Return a string representation of the DataFrame
-    return hourly_dataframe.to_string()
+    return hourly_dataframe.to_string(index=False)
 
 
 def send_to_telegram(message: str) -> dict:

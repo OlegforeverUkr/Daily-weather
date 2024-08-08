@@ -1,0 +1,22 @@
+name: Daily Sender Weather
+
+on:
+    workflow_dispatch:
+    schedule:
+      - cron: "0 6 * * *"
+      - cron: "* * * * *"
+
+env:
+    TOKEN: ${{ secrets.TOKEN }}
+    TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+
+jobs:
+    Daily-Run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            - name: Install Dependencies
+              run: pip install -r requirements.txt
+            - name: Run App
+              run: python app.py

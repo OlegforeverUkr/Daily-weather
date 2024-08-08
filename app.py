@@ -64,7 +64,7 @@ def get_weather() -> str:
     hourly_dataframe = pd.DataFrame(data=hourly_data)
 
     # Return a tabulate representation of the DataFrame
-    return tabulate(hourly_dataframe, headers="keys", tablefmt="plain", numalign="right", stralign="center", showindex=False)
+    return tabulate(hourly_dataframe, headers="keys", tablefmt="grid", numalign="center", stralign="center", showindex=False)
 
 
 

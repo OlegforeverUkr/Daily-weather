@@ -4,10 +4,10 @@ import os
 import requests
 import requests_cache
 import pandas as pd
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from retry_requests import retry
 
-load_dotenv(find_dotenv())
+load_dotenv()
 
 TELEGRAM_BOT_TOKEN = os.getenv("TOKEN")
 TELEGRAM_CHANNEL_ID = os.getenv('TELEGRAM_CHANNEL_ID')

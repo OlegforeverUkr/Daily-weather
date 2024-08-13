@@ -7,6 +7,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from retry_requests import retry
 from tabulate import tabulate
+from enum import Enum
 
 load_dotenv()
 
@@ -14,9 +15,21 @@ TELEGRAM_BOT_TOKEN = os.getenv("TOKEN")
 TELEGRAM_CHANNEL_ID = os.getenv('TELEGRAM_CHANNEL_ID')
 
 
-def get_weather() -> str:
+
+class City(Enum):
+    KHMELNITSKYY = (49.453551, 27.014202)
+    KHARKIV = (49.940276, 36.404887)
+    KIEV = (50.4501, 30.5238)
+    LONDON = (51.5074, -0.1278)
+    NEWYORK = (40.7128, -74.0060)
+    PARIS = (48.8566, 2.3522)
+    ROME = (41.9028, 12.4964)
+    STOCKHOLM = (59.3293, 18.0686)
+
+
+def get_weather(city: City) -> str:
     # Create a cache session with an expiration time of 1 hour
-    cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+    cache_session = requests_cache.CachedSession('cache', expire_after=3600)
     # Create a retry session with 5 retries and a backoff factor of 0.2
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
     # Create an OpenMeteo client with the retry session
@@ -24,8 +37,8 @@ def get_weather() -> str:
 
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
-        "latitude": 49.453551,
-        "longitude": 27.014202,
+        "latitude": city.value[0],
+        "longitude": city.value[1],
         "hourly": ["temperature_2m", "apparent_temperature", "precipitation_probability"],
         "timezone": None,
         "forecast_days": 1
@@ -90,6 +103,6 @@ def send_to_telegram(message: str) -> dict:
 
 
 if __name__ == '__main__':
-    weather = get_weather()
+    weather = get_weather(City.KHMELNITSKYY)
     print(weather)
     send_to_telegram(weather)
